@@ -1,12 +1,12 @@
 const char led = 13;    
 const char sensor = 0;
 
-float tension = 0;             //get tension on the output of the sensor
-float seuilObscurite = 0.80;    //Value in volt, limit to get the electrical meter blinking led
+float voltage = 0;     //get tension on the output of the sensor
+float limit = 1.20;    //Value in volt, limit to get the electrical meter blinking led. You may need to adjust this values depending on the environment
 
 // Delay between each data sending through sigfox network
 unsigned long prevMillis = 0;
-unsigned long interval =  3600000; // = 60mn*60s*1000ms
+unsigned long interval =  3600000; // = 60mn*60s*1000ms send a message every hour
 
 // Include librairies for the Akeru
 #include <Akeru.h>
@@ -15,32 +15,26 @@ unsigned long interval =  3600000; // = 60mn*60s*1000ms
 // Structure that will store the data
 typedef struct
 {
-  int consumption=0;    // conso electrique
+  unsigned int consumption=0;    // electrical consumption
 } Payload;
 
 Payload p;
  
 void setup()
 {
-    //définition des broches utilisées
     pinMode(led, OUTPUT);
- 
-    Serial.begin(9600); //la voie série pour monitorer
-
-    // Initialisation Akeru
+    Serial.begin(9600);
+    // Init Akeru
     Akeru.begin();
 }
 
 void loop()
 {
-    
-    tension = (analogRead(capteur) * 5.0) / 1024;  // converting this value into voltage
- 
-    if(tension >= seuilObscurite)
+    voltage = (analogRead(sensor) * 5.0) / 1024;  // converting this value into voltage
+    if(voltage >= limit)
     {
         digitalWrite(led, HIGH); //switch on the LED
-        p.consoelec++;
-        
+        p.consumption++;     
     }
     else
     {
@@ -48,25 +42,22 @@ void loop()
     }
     // Debug
     Serial.print("Voltage = ");
-    Serial.print(tension);
+    Serial.print(voltage);
     Serial.println(" V");
     Serial.print(" Consumption :");
-    Serial.print(p.consoelec);
+    Serial.print(p.consumption);
     Serial.println(" W/h");
 
     if ((millis() - prevMillis) > interval)
     {
       Akeru.begin();
-      // On enregistre l'heure courante pour le prochain tour de loop
       // Saving current time for next loop
       prevMillis = millis();
       // Send data through sigfox
       Akeru.send(&p, sizeof(p));
-      p.consoelec=0;
+      p.consumption=0;
     }
     Serial.print(" Interval :");
     Serial.println(millis() - prevMillis);
-   
- 
     delay(70);  // delay to read values
 }
