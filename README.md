@@ -1,4 +1,4 @@
-# sigfox_electrical_meter
+# Sigfox Electrical Meter
 
 ## Description
 This project will show you how to get your electricity consumption using a small device plugged onto your electrical meter. Note that it only works with the "Compteur Electrique Triphasé agréé EDF, ECS, 60A / 40KWh Multi Tarifs". This model is very common in France.
