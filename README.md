@@ -5,6 +5,8 @@ This project will show you how to get your electricity consumption using a small
 
 Basically, on this electrical meter, a LED blinks every time a Wh is consumed. So the idea is to record this blink and link it to a counter and then every hour send it to a server using Sigfox network.
 
+You can find the tutorial on : http://www.instructables.com/id/Sigfox-Electrical-Meter/
+
 ## Which microcontrollers will be used?
 
 We will be using the Akeru dev kit (from SnootLab)
